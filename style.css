@@ -1,0 +1,75 @@
+body {
+    font-family: "Spicy Rice", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.TTT-content {
+    background-color: aliceblue;
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    border: solid black;
+    height: 310px;
+    width: 310px;
+    padding: 5px;
+}
+
+.cell {
+    background-color: bisque;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    border: 1px solid #000;
+    cursor: pointer;
+}
+
+#status {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#menu button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+#game {
+    display: none;
+}
+
+#resetBtn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#resetBtn:hover {
+    background-color: #45a049;
+}

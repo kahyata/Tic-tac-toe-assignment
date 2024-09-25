@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stoic Reflections</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-image: url('background.jpg');
+            background-position: left; /* Adjust as needed */
+            background-size: cover; /* Ensures the image covers the entire container */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 25px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            color: #f0f0f0;
+        }
+        .quote {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #F6E96B;
+        }
+        .author {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+        }
+        .time-date {
+            flex: 1;
+        }
+        .bio {
+            flex: 2;
+        }
+        .image {
+            flex: 1;
+            text-align: right;
+        }
+        img {
+            max-width: 100px;
+            border-radius: 50%;
+        }
+        #day-of-year{
+            color: #C5705D;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div><strong>Daily Reflections</strong></div>
+            <div id="day-of-year"><strong>Day 1</strong></div>
+            <div><strong>Kahyata.</strong></div>
+        </div>
+        <div id="quote" class="quote"></div>
+        <div id="author" class="author"></div>
+        <div class="info">
+            <div id="time-date" class="time-date"></div>
+        </div>
+    </div>
+
+    <script>
+        const stoicQuotes = [
+"The best revenge is not to be like your enemy. – Marcus Aurelius",
+            "We suffer more often in imagination than in reality. – Seneca",
+            "What we fear doing most is usually what we most need to do. – Seneca",
+            "The best revenge is not to be like your enemy. – Marcus Aurelius",
+            "He who fears death will never do anything worth of a man who is alive. – Seneca",
+            "You have power over your mind, not outside events. Realize this, and you will find strength. – Marcus Aurelius",
+            "How long are you going to wait before you demand the best for yourself? – Epictetus",
+            "First say to yourself what you would be; and then do what you have to do. – Epictetus",
+            "Luck is what happens when preparation meets opportunity. – Seneca",
+            "The happiness of your life depends upon the quality of your thoughts. – Marcus Aurelius",
+            "Waste no more time arguing what a good man should be. Be one. – Marcus Aurelius",
+            "The more we value things outside our control, the less control we have. – Epictetus",
+            "It is not death that a man should fear, but he should fear never beginning to live. – Marcus Aurelius",
+            "Difficulties strengthen the mind, as labor does the body. – Seneca"
+        ];
+
+        function updateQuote() {
+            const today = new Date();
+            const index = today.getDate() % stoicQuotes.length;
+            const { quote, author } = stoicQuotes[index];
+            document.getElementById('quote').textContent = quote;
+            document.getElementById('author').textContent = author;
+            updateDayOfYear(today);
+        }
+
+        function updateDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 1);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay) + 1;
+            document.getElementById('day-of-year').innerHTML = `<strong>Day ${dayOfYear}</strong>`;
+        }
+
+        function updateTimeAndDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const formattedDate = now.toLocaleDateString(undefined, options);
+            document.getElementById('time-date').innerHTML = `<strong></strong><br>${formattedDate}`;
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(showPosition, showError, { enableHighAccuracy: true });
+            } else {
+                document.getElementById('time-date').innerHTML += "<br>Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const apiKey = 'YOUR_API_KEY'; // Replace with your actual OpenCage API key
+
+            fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const location = data.results[0].components;
+                    const city = location.city || location.town || location.village || 'Unknown City';
+                    const country = location.country || 'Unknown Country';
+                    document.getElementById('time-date').innerHTML = 
+                        `<strong></strong><br>${new Date().toLocaleString()}<br>${city}, ${country}`;
+                })
+                .catch(error => {
+                    document.getElementById('time-date').innerHTML += "<br>Error getting location.";
+                });
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('time-date').innerHTML += "<br>User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('time-date').innerHTML += "<br>Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('time-date').innerHTML += "<br>The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('time-date').innerHTML += "<br>An unknown error occurred.";
+                    break;
+            }
+        }
+
+        updateQuote();
+        updateTimeAndDate();
+        getLocation();
+        setInterval(updateTimeAndDate, 1000);
+    </script>
+</body>
+</html>
